@@ -69,7 +69,8 @@ jobs:
           echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 
           
-    
+          CONTAINER_ID=$(sudo docker ps -q -f name=my-flask-app) && [ -n "$CONTAINER_ID" ] && sudo docker rm -f $CONTAINER_ID && echo "Found Docker already running, removed"
+
           # Stop and remove any existing container with the name my-flask-app
           existing_container_id=$(docker ps -aq -f name=my-flask-app)
           if [ -n "$existing_container_id" ]; then
