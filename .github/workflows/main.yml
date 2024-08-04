@@ -76,7 +76,7 @@ jobs:
           if [ -n "$existing_container_id" ]; then
             echo "Stopping existing container..."
             docker rm -f my-flask-app
-            docker stop my-flask-app || echo "Failed to stop the existing container."
+            docker "$existing_container_id" || echo "Failed to stop the existing container."
             echo "Removing existing container..."
             docker rm my-flask-app || echo "Failed to remove the existing container."
           else
