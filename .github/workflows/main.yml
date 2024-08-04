@@ -70,6 +70,11 @@ jobs:
 
           # Pull the latest Docker image
           docker pull $DOCKER_USERNAME/my-flask-app:latest
+          # Stop and remove any existing container with the same name
+          if [ "$(docker ps -q -f name=flask-hello-world)" ]; then
+          docker stop flask-hello-world
+          docker rm flask-hello-world
+          fi
 
           # Stop and remove any existing container
           if [ "$(docker ps -q -f name=my-flask-app)" ]; then
