@@ -18,7 +18,7 @@ Welcome to the **Flask App Deployment** repository! This guide will walk you thr
 
 ## **Project Overview**
 
-This project demonstrates a Continuous Integration and Continuous Deployment (CI/CD) pipeline for a Flask application. It uses Docker to containerize the application and GitHub Actions for automated building and deployment. The application is deployed to an AWS EC2 instance, ensuring scalability and reliability.
+This project demonstrates a Continuous Integration and Continuous Deployment (CI/CD) pipeline for a Flask application. It uses Docker to containerize the application and GitHub Actions for automated building and deployment. The application is deployed to an AWS EC2 instance, ensuring scalability and reliability. The setup also includes functionality for handling private Docker images with login capabilities and automatically detects and stops previous containers if they exist.
 
 ## **Prerequisites**
 
@@ -207,6 +207,3 @@ jobs:
 3. **Verify Deployment**:
    - Access your application via the public IP or DNS of your EC2 instance at port 5000 (e.g., `http://<EC2_PUBLIC_IP>:5000`).
 
-
-## All the best
-#
