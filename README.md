@@ -1,4 +1,4 @@
-# **Flask App Deployment with Docker and GitHub Actions**
+# **Automated Flask App Deployment on AWS EC2 with Docker and GitHub Actions**
 
 Welcome to the **Flask App Deployment** repository! This guide will walk you through deploying a simple Flask application to an EC2 instance using Docker and GitHub Actions. By the end of this guide, you'll have a streamlined CI/CD pipeline that automatically builds, tests, and deploys your application.
 
