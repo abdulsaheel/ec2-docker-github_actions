@@ -137,19 +137,19 @@ jobs:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
 
-    - name: Build Docker image
-      run: |
-        docker build -t ${{ secrets.DOCKER_IMAGE_NAME }}:${{ secrets.DOCKER_IMAGE_TAG }} .
-
     - name: Log in to Docker Hub
       uses: docker/login-action@v2
       with:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
 
+    - name: Build Docker image
+      run: |
+        docker build -t ${{ secrets.DOCKER_USERNAME }}/my-flask-app:latest .
+
     - name: Push Docker image
       run: |
-        docker push ${{ secrets.DOCKER_IMAGE_NAME }}:${{ secrets.DOCKER_IMAGE_TAG }}
+        docker push ${{ secrets.DOCKER_USERNAME }}/my-flask-app:latest
 
   deploy:
     name: Deploy to EC2
@@ -170,21 +170,28 @@ jobs:
       env:
         HOSTNAME: ${{ secrets.SSH_HOST }}
         USER_NAME: ${{ secrets.USER_NAME }}
-        DOCKER_IMAGE_NAME: ${{ secrets.DOCKER_IMAGE_NAME }}
-        DOCKER_IMAGE_TAG: ${{ secrets.DOCKER_IMAGE_TAG }}
+        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
       run: |
-        ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} << 'EOF'
-          # Pull the latest Docker image
-          docker pull $DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG
+        ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} << EOF
+          # Log in to Docker Hub
+          echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 
-          # Stop and remove any existing container
-          if [ "$(docker ps -q -f name=flask-hello-world)" ]; then
-            docker stop flask-hello-world
-            docker rm flask-hello-world
+          # Check for existing containers and remove them
+          EXISTING_CONTAINER_ID=$(docker ps -aq -f name=my-flask-app)
+          if [ -n "$EXISTING_CONTAINER_ID" ]; then
+            echo "Stopping and removing existing container..."
+            docker stop my-flask-app || true
+            docker rm my-flask-app || true
           fi
 
+          # Pull the latest Docker image
+          echo "Pulling latest image..."
+          sudo docker pull $DOCKER_USERNAME/my-flask-app:latest
+
           # Run the new Docker container
-          docker run -d --name flask-hello-world -p 5000:5000 $DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG
+          echo "Starting new container..."
+          sudo docker run -d --name my-flask-app -p 5000:5000 $DOCKER_USERNAME/my-flask-app:latest || echo "Failed to start the new container."
         EOF
 ```
 
