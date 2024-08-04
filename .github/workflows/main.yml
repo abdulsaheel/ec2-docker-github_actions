@@ -30,7 +30,8 @@ jobs:
 
     - name: Build Docker image
       run: |
-        docker build -t ${{ secrets.DOCKER_IMAGE_NAME }}:${{ secrets.DOCKER_IMAGE_TAG }} .
+        echo "Building Docker image with name: ${{ secrets.DOCKER_IMAGE_NAME }} and tag: latest"
+        docker build -t ${{ secrets.DOCKER_IMAGE_NAME }}:latest .
 
     - name: Log in to Docker Hub
       uses: docker/login-action@v2
@@ -40,7 +41,8 @@ jobs:
 
     - name: Push Docker image
       run: |
-        docker push ${{ secrets.DOCKER_IMAGE_NAME }}:${{ secrets.DOCKER_IMAGE_TAG }}
+        echo "Pushing Docker image with name: ${{ secrets.DOCKER_IMAGE_NAME }} and tag: latest"
+        docker push ${{ secrets.DOCKER_IMAGE_NAME }}:latest
 
   deploy:
     name: Deploy to EC2
@@ -62,11 +64,10 @@ jobs:
         HOSTNAME: ${{ secrets.SSH_HOST }}
         USER_NAME: ${{ secrets.USER_NAME }}
         DOCKER_IMAGE_NAME: ${{ secrets.DOCKER_IMAGE_NAME }}
-        DOCKER_IMAGE_TAG: ${{ secrets.DOCKER_IMAGE_TAG }}
       run: |
         ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} << 'EOF'
           # Pull the latest Docker image
-          docker pull $DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG
+          docker pull $DOCKER_IMAGE_NAME:latest
 
           # Stop and remove any existing container
           if [ "$(docker ps -q -f name=flask-hello-world)" ]; then
@@ -75,5 +76,6 @@ jobs:
           fi
 
           # Run the new Docker container
-          docker run -d --name flask-hello-world -p 5000:5000 $DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG
+          docker run -d --name flask-hello-world -p 5000:5000 $DOCKER_IMAGE_NAME:latest
         EOF
+
