@@ -72,11 +72,11 @@ jobs:
           docker pull $DOCKER_USERNAME/my-flask-app:latest
 
           # Stop and remove any existing container
-          if [ "$(docker ps -q -f name=flask-hello-world)" ]; then
-            docker stop flask-hello-world
-            docker rm flask-hello-world
+          if [ "$(docker ps -q -f name=my-flask-app)" ]; then
+            docker stop my-flask-app
+            docker rm my-flask-app
           fi
 
           # Run the new Docker container
-          docker run -d --name flask-hello-world -p 5000:5000 $DOCKER_USERNAME/my-flask-app:latest
+          docker run -d --name my-flask-app -p 5000:5000 $DOCKER_USERNAME/my-flask-app:latest
         EOF
