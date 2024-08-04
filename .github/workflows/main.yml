@@ -73,6 +73,9 @@ jobs:
             echo "Stopping and removing existing container..."
             docker stop my-flask-app
             docker rm my-flask-app
+          elif [ "$(docker ps -aq -f name=my-flask-app)" ]; then
+            echo "Removing existing stopped container..."
+            docker rm my-flask-app
           fi
 
           # Pull the latest Docker image
