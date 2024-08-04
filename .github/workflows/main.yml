@@ -72,22 +72,22 @@ jobs:
           CONTAINER_ID=$(sudo docker ps -q -f name=my-flask-app) && [ -n "$CONTAINER_ID" ] && sudo docker rm -f $CONTAINER_ID && echo "Found Docker already running, removed"
 
           # Stop and remove any existing container with the name my-flask-app
-          existing_container_id=$(docker ps -aq -f name=my-flask-app)
+          existing_container_id=$(sudo docker ps -aq -f name=my-flask-app)
           if [ -n "$existing_container_id" ]; then
             echo "Stopping existing container..."
-            docker rm -f my-flask-app
-            docker "$existing_container_id" || echo "Failed to stop the existing container."
+            sudo docker rm -f my-flask-app
+            sudo docker stop my-flask-app || echo "Failed to stop the existing container."
             echo "Removing existing container..."
-            docker rm my-flask-app || echo "Failed to remove the existing container."
+            sudo docker rm my-flask-app || echo "Failed to remove the existing container."
           else
             echo "No existing container named my-flask-app found."
           fi
     
           # Optionally remove the old image (can be skipped if you prefer to keep old images)
-          if [ "$(docker images -q $DOCKER_USERNAME/my-flask-app:latest)" ]; then
+          if [ "$(sudo docker images -q $DOCKER_USERNAME/my-flask-app:latest)" ]; then
             echo "Removing old image..."
-            docker rm -f my-flask-app
-            docker rmi $DOCKER_USERNAME/my-flask-app:latest || echo "Failed to remove the old image."
+            sudo docker rm -f my-flask-app
+            sudo docker rmi $DOCKER_USERNAME/my-flask-app:latest || echo "Failed to remove the old image."
           fi
           
           # Run the new Docker container
