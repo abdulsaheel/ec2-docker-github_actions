@@ -68,10 +68,11 @@ jobs:
           # Log in to Docker Hub
           echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 
-          # Stop and remove any existing container
-          if [ "$(docker ps -q -f name= $DOCKER_USERNAME/flask-hello-world)" ]; then
-            docker stop flask-hello-world
-            docker rm flask-hello-world
+          # Stop and remove any existing container with the same name
+          if [ "$(docker ps -q -f name=my-flask-app)" ]; then
+            echo "Stopping and removing existing container..."
+            docker stop my-flask-app
+            docker rm my-flask-app
           fi
 
           # Pull the latest Docker image
