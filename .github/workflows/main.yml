@@ -69,9 +69,10 @@ jobs:
           docker pull $DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG
 
           # Stop and remove any existing container with the same name
-          if [ "$(docker ps -q -f name=flask-hello-world)" ]; then
-            docker stop flask-hello-world
-            docker rm flask-hello-world
+          EXISTING_CONTAINER_ID=$(docker ps -q -f name=flask-hello-world)
+          if [ -n "$EXISTING_CONTAINER_ID" ]; then
+            docker stop $EXISTING_CONTAINER_ID
+            docker rm $EXISTING_CONTAINER_ID
           fi
 
           # Run the new Docker container
