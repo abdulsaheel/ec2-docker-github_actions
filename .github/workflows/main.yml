@@ -68,24 +68,10 @@ jobs:
           # Log in to Docker Hub
           echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 
-          # Stop and remove any existing container with the name my-flask-app
-          CONTAINER_ID=$(sudo docker ps -q -f name=my-flask-app)
-          if [ -n "$CONTAINER_ID" ]; then
-            echo "Stopping existing container..."
-            sudo docker stop $CONTAINER_ID || echo "Failed to stop the existing container."
-            echo "Removing existing container..."
-            sudo docker rm $CONTAINER_ID || echo "Failed to remove the existing container."
-          else
-            echo "No existing container named my-flask-app found."
-          fi
-
-          # Optionally remove the old image (can be skipped if you prefer to keep old images)
-          IMAGE_ID=$(sudo docker images -q $DOCKER_USERNAME/my-flask-app:latest)
-          if [ -n "$IMAGE_ID" ]; then
-            echo "Removing old image..."
-            sudo docker rmi $IMAGE_ID || echo "Failed to remove the old image."
-          else
-            echo "No old image found."
+          # Stop and remove any existing container
+          if [ "$(docker ps -q -f name= $DOCKER_USERNAME/flask-hello-world)" ]; then
+            docker stop flask-hello-world
+            docker rm flask-hello-world
           fi
 
           # Pull the latest Docker image
