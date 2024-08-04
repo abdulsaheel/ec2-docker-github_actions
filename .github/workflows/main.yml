@@ -73,10 +73,19 @@ jobs:
 
           # Stop and remove any existing container
           if [ "$(docker ps -q -f name=my-flask-app)" ]; then
+            echo "Stopping existing container..."
             docker stop my-flask-app
+            echo "Removing existing container..."
             docker rm my-flask-app
           fi
 
+          # Remove any existing image (optional)
+          if [ "$(docker images -q $DOCKER_USERNAME/my-flask-app:latest)" ]; then
+            echo "Removing existing image..."
+            docker rmi $DOCKER_USERNAME/my-flask-app:latest
+          fi
+
           # Run the new Docker container
+          echo "Starting new container..."
           docker run -d --name my-flask-app -p 5000:5000 $DOCKER_USERNAME/my-flask-app:latest
         EOF
